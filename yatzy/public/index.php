@@ -5,19 +5,28 @@ declare(strict_types=1);
 $antalSlag = 0;
 $tarningar = [];
 $stanna = false;
-
+$check=[];
 // Ta emot postat formulär
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $antalSlag = $_POST['antalSlag'];
-    if (isset($_POST['stanna'])) {
+    if ($antalSlag === "3" || isset($_POST['stanna'])) {
         $stanna = true;
+    } else {
+        $check = $_POST['check'] ?? [];
+        $antalSlag++;
+        for ($i = 0;$i <= 4;$i++) {
+            if (isset($check[$i])) {
+                $tarningar[$i] = $check[$i];
+            } else {
+                $tarningar[$i] = rand(1, 6);
+            }
+        }
     }
 } else {
-
-}
-$antalSlag++;
-for ($i = 1;$i <= 5;$i++) {
-    $tarningar[] = rand(1, 6);
+    $antalSlag++;
+    for ($i = 0;$i <= 4;$i++) {
+        $tarningar[] = rand(1, 6);
+    }
 }
 
 ?>
@@ -46,7 +55,7 @@ for ($i = 1;$i <= 5;$i++) {
                 <div id="checkboxes">
                     <?php
                     foreach ($tarningar as $index => $value) {
-                        echo "<p><input type='checkbox' name='check[$index]' value='$value'></p>";
+                        echo "<p><input type='checkbox' name='check[$index]' value='$value' ".  (isset($check[$index]) ? 'checked' :'') ." ></p>";
                     }
                     ?>
                 </div>
@@ -66,7 +75,7 @@ for ($i = 1;$i <= 5;$i++) {
             <form>
                 <input type="submit" value="Börja om">
             </form>
-        <?php
+            <?php
         }
         ?>
     </body>
