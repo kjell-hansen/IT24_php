@@ -9,8 +9,9 @@ $check=[];
 // Ta emot postat formulär
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $antalSlag = $_POST['antalSlag'];
-    if ($antalSlag === "3" || isset($_POST['stanna'])) {
+    if ( isset($_POST['stanna'])) {
         $stanna = true;
+        $tarningar=$_POST['tarningar'];
     } else {
         $check = $_POST['check'] ?? [];
         $antalSlag++;
@@ -20,6 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             } else {
                 $tarningar[$i] = rand(1, 6);
             }
+        }
+        if($antalSlag===3) {
+            $stanna=true;
         }
     }
 } else {
@@ -56,11 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     <?php
                     foreach ($tarningar as $index => $value) {
                         echo "<p><input type='checkbox' name='check[$index]' value='$value' ".  (isset($check[$index]) ? 'checked' :'') ." ></p>";
+                        echo "<input type='hidden' name='tarningar[$index]' value='$value'>";
                     }
                     ?>
                 </div>
                 <p>Du har slagit <?= $antalSlag; ?> gånger</p>
-                <input type="shidden" name="antalSlag" value="<?= $antalSlag; ?>">
+                <input type="hidden" name="antalSlag" value="<?= $antalSlag; ?>">
                 <input type="submit" value="Slå igen">
                 <input type="submit" name="stanna" value="Stanna">
             </form>
