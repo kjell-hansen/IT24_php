@@ -1,17 +1,19 @@
 <?php
 declare(strict_types=1);
 
+require_once "../src/yatzyFunktioner.php";
+
 // Initiera variabler
 $antalSlag = 0;
 $tarningar = [];
 $stanna = false;
-$check=[];
+$check = [];
 // Ta emot postat formulär
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $antalSlag = $_POST['antalSlag'];
-    if ( isset($_POST['stanna'])) {
+    if (isset($_POST['stanna'])) {
         $stanna = true;
-        $tarningar=$_POST['tarningar'];
+        $tarningar = $_POST['tarningar'];
     } else {
         $check = $_POST['check'] ?? [];
         $antalSlag++;
@@ -22,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 $tarningar[$i] = rand(1, 6);
             }
         }
-        if($antalSlag===3) {
-            $stanna=true;
+        if ($antalSlag === 3) {
+            $stanna = true;
         }
     }
 } else {
@@ -33,6 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     }
 }
 
+// Om vi ska stanna så ska tärningskombinationerna utvärderas
+if ($stanna) {
+    $resultat = utvarderaTarningar($tarningar);
+}
 ?>
 <!doctype html>
 <html lang="sv">
@@ -59,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 <div id="checkboxes">
                     <?php
                     foreach ($tarningar as $index => $value) {
-                        echo "<p><input type='checkbox' name='check[$index]' value='$value' ".  (isset($check[$index]) ? 'checked' :'') ." ></p>";
+                        echo "<p><input type='checkbox' name='check[$index]' value='$value' " . (isset($check[$index]) ? 'checked' : '') . " ></p>";
                         echo "<input type='hidden' name='tarningar[$index]' value='$value'>";
                     }
                     ?>
@@ -74,8 +80,11 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <hr>
             <p>Du fick:</p>
             <ul>
-                <li>Ett par - värde 10</li>
-                <li>Chans - värde 23</li>
+                <?php
+                foreach ($resultat as $kombination => $varde) {
+                    echo "<li>$kombination - $varde</li>";
+                }
+                ?>
             </ul>
             <form>
                 <input type="submit" value="Börja om">
