@@ -9,6 +9,30 @@ declare(strict_types=1);
  */
 function utvarderaTarningar(array $tarningar):array {
     $retur = [];
+    if (isEttPar($tarningar)) {
+        $retur["Ett par"] = vardeEttPar($tarningar);
+    }
+    if (isTvaPar($tarningar)) {
+        $retur["Två par"] = vardeTvaPar($tarningar);
+    }
+    if (isTretal($tarningar)) {
+        $retur["Tretal"] = vardeTretal($tarningar);
+    }
+    if (isFyrtal($tarningar)) {
+        $retur["Fyrtal"] = vardeFyrtal($tarningar);
+    }
+    if (isLitenStege($tarningar)) {
+        $retur["Liten stege"] = vardeAllaTarningar($tarningar);
+    }
+    if (isStorStege($tarningar)) {
+        $retur["Stor stege"] = vardeAllaTarningar($tarningar);
+    }
+    if (isKak($tarningar)) {
+        $retur["Kåk"] = vardeAllaTarningar($tarningar);
+    }
+
+    $retur["Chans"] = vardeAllaTarningar($tarningar);
+
     if (isYatzy($tarningar)) {
         $retur['Yatzy'] = 50;
     }
@@ -127,7 +151,7 @@ function isTvaPar(array $tarningar):bool {
 function isEttPar(array $tarningar):bool {
     $antalOlikaVarden = array_count_values($tarningar);
 
-    if(count($antalOlikaVarden)===4){
+    if (count($antalOlikaVarden) === 4) {
         return true;
     }
 
@@ -139,17 +163,17 @@ function isEttPar(array $tarningar):bool {
  * @param array $tarningar
  * @return bool
  */
-function isKak(array $tarningar) :bool {
+function isKak(array $tarningar):bool {
     $antalOlikaVarden = array_count_values($tarningar);
 
     // Kåk innehåller två olika värden
-    if(count($antalOlikaVarden)!==2) {
+    if (count($antalOlikaVarden) !== 2) {
         return false;
     }
 
     // Om något antal värden är 4 är det ingen kåk
     foreach ($antalOlikaVarden as $varde) {
-        if($varde===4) {
+        if ($varde === 4) {
             return false;
         }
     }
@@ -176,5 +200,53 @@ function isStorStege(array $tarningar):bool {
     }
 
     return true;
+}
 
+function vardeEttPar(array $tarningar):int {
+    $tarningsVarden = array_count_values($tarningar);
+    foreach ($tarningsVarden as $ogon => $antal) {
+        if ($antal === 2) {
+            return $antal * $ogon;
+        }
+    }
+
+    return -1;
+}
+
+function vardeTretal(array $tarningar):int {
+    $tarningsVarden = array_count_values($tarningar);
+    foreach ($tarningsVarden as $ogon => $antal) {
+        if ($antal === 3) {
+            return $antal * $ogon;
+        }
+    }
+
+    return -1;
+}
+
+function vardeFyrtal(array $tarningar):int {
+    $tarningsVarden = array_count_values($tarningar);
+    foreach ($tarningsVarden as $ogon => $antal) {
+        if ($antal === 4) {
+            return $antal * $ogon;
+        }
+    }
+
+    return -1;
+}
+
+function vardeTvaPar(array $tarningar):int {
+    $tarningsVarden = array_count_values($tarningar);
+    $summa = 0;
+    foreach ($tarningsVarden as $ogon => $antal) {
+        if ($antal === 2) {
+            $summa += $antal * $ogon;
+        }
+    }
+
+    return $summa;
+}
+
+function vardeAllaTarningar(array $tarningar):int {
+    return array_sum($tarningar);
 }
